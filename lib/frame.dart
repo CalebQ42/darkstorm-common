@@ -33,14 +33,42 @@ class Frame extends StatefulWidget{
 }
 
 class FrameState extends State<Frame> {
+  double _verticalTranslation = 0;
 
-  bool vertical = false;
-  bool expanded = false;
-  double verticalTranslation = 0;
+  bool _expanded = false;
+  bool get expanded => _expanded;
+  set expanded(bool e) {
+    if(e == _expanded) return;
+    setState(() => _expanded = e);
+    for(var i in widget.navItems){
+      (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
+    }
+    for(var i in widget.bottomNavItems){
+      (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
+    }
+    if(widget.floatingItem != null){
+      (widget.floatingItem!.key! as GlobalKey<_FloatingNavState>).currentState?.setState((){});
+    }
+  }
+
+  bool _vertical = false;
+  bool get vertical => _vertical;
+  set vertical(bool v){
+    if(_vertical != v){
+      _vertical = v;
+      for(var i in widget.navItems){
+        (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
+      }
+      for(var i in widget.bottomNavItems){
+        (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
+      }
+      if(widget.floatingItem != null){
+        (widget.floatingItem!.key! as GlobalKey<_FloatingNavState>).currentState?.setState((){});
+      }
+    }
+  }
 
   String _selection = "";
-  String _title = "";
-
   String get selection => _selection;
   set selection(String sel) =>
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -48,15 +76,19 @@ class FrameState extends State<Frame> {
         _selection = sel;
       });
     });
-  set title(String t) =>
+
+  String _title = "";
+  set title(String t) {
+    if(!widget.routeTitle) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() => _title = t);
     });
+  }
   bool get hidden => widget.hideBar != null ? widget.hideBar!(_selection) : false;
 
   Future<bool> handleBackpress() async{
-    if(expanded){
-      setState(() => expanded = !expanded);
+    if(_expanded){
+      expanded = false;
       return false;
     }
     return true;
@@ -77,7 +109,7 @@ class FrameState extends State<Frame> {
     hidden ? EdgeInsets.zero : vertical ? const EdgeInsets.only(top: 50) :
         const EdgeInsets.only(left: 50);
   Matrix4? get transform => !expanded ? Matrix4.translationValues(0, 0, 0) :
-    vertical ? Matrix4.translationValues(0, verticalTranslation, 0) :
+    vertical ? Matrix4.translationValues(0, _verticalTranslation, 0) :
         Matrix4.translationValues(200, 0, 0);
   ShapeBorder get topItemShape =>
     hidden ? getBorder() :
@@ -91,7 +123,7 @@ class FrameState extends State<Frame> {
   Widget build(BuildContext context){
     var media = MediaQuery.of(context);
     vertical = media.size.height > media.size.width;
-    verticalTranslation = (media.size.height / 2) - 50;
+    _verticalTranslation = (media.size.height / 2) - 50;
     var ti = TopResources.of(context);
     var navHeight = 50 + (widget.navItems.length * 50) + (widget.bottomNavItems.length * 50);
     if(!vertical && widget.floatingItem != null) navHeight += 50;
@@ -197,19 +229,25 @@ class FrameState extends State<Frame> {
   }
 }
 
-class Nav extends StatelessWidget{
+class Nav extends StatefulWidget{
   final Widget icon;
   final String name;
   final String routeName;
   //Only set to true if item is the last item in Frame.bottomNavItems
   final bool lastItem;
 
-  const Nav({super.key,
-      required this.icon,
-      required this.name,
-      required this.routeName,
-      this.lastItem = false});
-  
+  Nav({
+    required this.icon,
+    required this.name,
+    required this.routeName,
+    this.lastItem = false
+  }) : super(key: GlobalKey<_NavState>());
+
+  @override
+  State<Nav> createState() => _NavState();
+}
+
+class _NavState extends State<Nav> {
   @override
   Widget build(BuildContext context) {
     var ti = TopResources.of(context);
@@ -217,7 +255,7 @@ class Nav extends StatelessWidget{
       duration: ti.globalDuration,
       margin: (){
         EdgeInsets margin = ti.frame.vertical ? EdgeInsets.zero : const EdgeInsets.only(right: 20);
-        if(ti.frame.vertical && lastItem){
+        if(ti.frame.vertical && widget.lastItem){
           margin = margin += const EdgeInsets.only(bottom: 20);
         }
         return margin;
@@ -235,11 +273,11 @@ class Nav extends StatelessWidget{
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  icon,
+                  widget.icon,
                   AnimatedContainer(
                     duration: ti.globalDuration,
-                    margin: ti.frame.selection == routeName ? const EdgeInsets.symmetric(vertical: 3) : EdgeInsets.zero,
-                    height: ti.frame.selection == routeName ? 2 : 0,
+                    margin: ti.frame.selection == widget.routeName ? const EdgeInsets.symmetric(vertical: 3) : EdgeInsets.zero,
+                    height: ti.frame.selection == widget.routeName ? 2 : 0,
                     width: 5,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200)),
@@ -249,7 +287,7 @@ class Nav extends StatelessWidget{
                 ]
               )
             ),
-            Text(name,
+            Text(widget.name,
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ]
@@ -262,25 +300,33 @@ class Nav extends StatelessWidget{
       child: InkResponse(
         highlightShape: BoxShape.rectangle,
         containedInkWell: true,
-        onTap: () => ti.nav.popAndPushNamed(routeName),
+        onTap: () {
+          ti.nav.pushNamed(widget.routeName);
+          Frame.of(context).title = widget.name;
+          Frame.of(context).expanded = false;
+        },
         child: inner,
       )
     );
   }
 }
 
-class FloatingNav extends StatelessWidget{
+class FloatingNav extends StatefulWidget{
   final String title;
   final Widget icon;
   final void Function() onTap;
 
-  const FloatingNav({
-    super.key,
+  FloatingNav({
     required this.title,
     required this.icon,
     required this.onTap
-  });
+  }) : super(key: GlobalKey<_FloatingNavState>());
 
+  @override
+  State<FloatingNav> createState() => _FloatingNavState();
+}
+
+class _FloatingNavState extends State<FloatingNav> {
   @override
   Widget build(BuildContext context) {
     var ti = TopResources.of(context);
@@ -289,7 +335,7 @@ class FloatingNav extends StatelessWidget{
       child = SizedBox.square(
         dimension: 50,
         child: Center(
-          child: icon
+          child: widget.icon
         )
       );
     }else{
@@ -303,11 +349,11 @@ class FloatingNav extends StatelessWidget{
             SizedBox.square(
               dimension: 50,
               child: Center(
-                child: icon
+                child: widget.icon
               )
             ),
             Text(
-              title,
+              widget.title,
               style: Theme.of(context).textTheme.titleMedium,
             )
           ],
@@ -315,7 +361,7 @@ class FloatingNav extends StatelessWidget{
       );
     }
     return InkResponse(
-      onTap: onTap,
+      onTap: widget.onTap,
       containedInkWell: true,
       highlightShape: BoxShape.rectangle,
       child: child,

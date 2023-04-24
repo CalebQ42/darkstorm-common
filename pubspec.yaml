@@ -1,6 +1,6 @@
 name: darkstorm_common
 description: Common widgets and utilities for my apps
-version: 1.0.0-pre.3
+version: 1.0.0-pre.4
 repository: https://github.com/CalebQ42/darkstorm-common
 homepage: https://darkstorm.tech
 
@@ -19,6 +19,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.1
 
 flutter:

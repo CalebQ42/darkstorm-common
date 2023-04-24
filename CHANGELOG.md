@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-pre.4
+
+* Use some key trickery to update nav items for Frame. (hopefully this works)
+
 ## 1.0.0-pre.3
 
 * TopResources.globalDuration is no longer final so it can be set. (this is the entire reason I seperated TopResources from TopInherit).
