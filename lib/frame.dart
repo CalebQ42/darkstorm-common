@@ -134,49 +134,7 @@ class FrameState extends State<Frame> {
       navExpand = navHeight < media.size.height;
     }
     var navItems = [
-      InkResponse(
-        onTap: () => setState(() => expanded = !expanded),
-        highlightShape: BoxShape.rectangle,
-        containedInkWell: true,
-        child: SizedOverflowBox(
-          size: const Size.fromHeight(50),
-          child: AnimatedContainer(
-            duration: ti.globalDuration,
-            margin: vertical && !expanded ? const EdgeInsets.only(bottom: 20) : EdgeInsets.zero,
-            child: Row(
-              children: [
-                const SizedBox.square(
-                  dimension: 50,
-                  child: Center(
-                    child: Icon(Icons.menu)
-                  ),
-                ),
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: ti.globalDuration,
-                    child: Text(
-                      _title == "" ? widget.appName : _title,
-                      key: ValueKey(_title == "" ? widget.appName : _title),
-                    ),
-                  ),
-                ),
-                AnimatedSwitcher(
-                  duration: ti.globalDuration,
-                  transitionBuilder: (child, anim) =>
-                    SizeTransition(
-                      axis: Axis.horizontal,
-                      axisAlignment: -1.0,
-                      sizeFactor: anim,
-                      child: child,
-                    ),
-                  child: widget.floatingItem != null && vertical ?
-                    widget.floatingItem! : null
-                )
-              ],
-            ),
-          )
-        )
-      ),
+      topNav(ti),
       if(navExpand) const Spacer(),
       ...widget.navItems,
       if(navExpand) const Spacer(),
@@ -224,6 +182,68 @@ class FrameState extends State<Frame> {
             )
           ],
         )
+      )
+    );
+  }
+
+  Widget topNav(TopResources ti) {
+    Widget inner = AnimatedContainer(
+      duration: ti.globalDuration,
+      margin: (){
+        EdgeInsets margin = ti.frame.vertical ? EdgeInsets.zero : const EdgeInsets.only(right: 20);
+        if(ti.frame.vertical){
+          margin = margin += const EdgeInsets.only(bottom: 20);
+        }
+        return margin;
+      }(),
+      child: AnimatedAlign(
+        duration: ti.globalDuration,
+        alignment: ti.frame.expanded ? Alignment.center : Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox.square(
+              dimension: 50,
+              child: Center(
+                child: Icon(Icons.menu),
+              )
+            ),
+            Text(_title == "" ? widget.appName : _title,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ]
+        )
+      )
+    );
+    if(widget.floatingItem != null){
+      inner = Row(
+        children: [
+          Expanded(
+            child: inner
+          ),
+          AnimatedSwitcher(
+            duration: ti.globalDuration,
+            transitionBuilder: (child, anim) =>
+              SizeTransition(
+                sizeFactor: anim,
+                axis: Axis.horizontal,
+                axisAlignment: -1.0,
+                child: child
+              ),
+            child: vertical && ti.frame.expanded ?
+              widget.floatingItem : null
+          )
+        ],
+      );
+    }
+    return SizedOverflowBox(
+      alignment: Alignment.topLeft,
+      size: const Size.fromHeight(50),
+      child: InkResponse(
+        highlightShape: BoxShape.rectangle,
+        containedInkWell: true,
+        onTap: () => expanded = !_expanded,
+        child: inner,
       )
     );
   }

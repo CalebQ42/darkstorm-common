@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0-pre.6
+
+* Forgot to actually add the improved top nav to the UI (oops).
+
+## 1.0.0-pre.5
+
+* Fixed the top nav item not displaying right.
+  * Frame.floatingNav now disappears when the nav drawer is open
+
 ## 1.0.0-pre.4
 
 * Use some key trickery to update nav items for Frame. (hopefully this works)
