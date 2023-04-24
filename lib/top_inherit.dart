@@ -33,5 +33,5 @@ class TopInherit extends InheritedWidget{
   const TopInherit({super.key, required this.resources, required super.child});
 
   @override
-  bool updateShouldNotify(covariant InheritedWidget _) => false;
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
 }
