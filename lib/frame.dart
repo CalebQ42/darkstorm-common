@@ -5,10 +5,14 @@ class Frame extends StatefulWidget{
   
   final Widget child;
   final bool beveled;
+  //Set the selected Nav's name to the title when tapped.
+  final bool routeTitle;
   final String appName;
-  final List<Widget> navItems;
-  final List<Widget> bottomNavItems;
-  final Nav? floatingItem; 
+  final List<Nav> navItems;
+  final List<Nav> bottomNavItems;
+  final FloatingNav? floatingItem; 
+  //Checks the route name to know to hide the nav bar.
+  final bool Function(String route)? hideBar;
 
   const Frame({
     super.key,
@@ -17,6 +21,8 @@ class Frame extends StatefulWidget{
     required this.navItems,
     required this.bottomNavItems,
     required this.child,
+    this.hideBar,
+    this.routeTitle = true,
     this.floatingItem
   });
 
@@ -30,19 +36,23 @@ class FrameState extends State<Frame> {
 
   bool vertical = false;
   bool expanded = false;
-  bool hidden = true;
   double verticalTranslation = 0;
 
   String _selection = "";
+  String _title = "";
 
   String get selection => _selection;
   set selection(String sel) =>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        hidden =  sel.startsWith("/intro") || sel == "/loading";
         _selection = sel;
       });
     });
+  set title(String t) =>
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() => _title = t);
+    });
+  bool get hidden => widget.hideBar != null ? widget.hideBar!(_selection) : false;
 
   Future<bool> handleBackpress() async{
     if(expanded){
@@ -94,17 +104,45 @@ class FrameState extends State<Frame> {
               height: vertical ? (media.size.height / 2) : media.size.height,
               child: Column(
                 children: [
-                  Nav(
-                    name: widget.appName,
-                    icon: const Icon(Icons.menu),
+                  InkResponse(
                     onTap: () => setState(() => expanded = !expanded),
-                    vertical: vertical,
-                    expanded: expanded,
-                    topItem: true,
+                    highlightShape: BoxShape.rectangle,
+                    containedInkWell: true,
+                    child: SizedOverflowBox(
+                      size: const Size.fromHeight(50),
+                      child: AnimatedContainer(
+                        duration: ti.globalDuration,
+                        margin: vertical && !expanded ? const EdgeInsets.only(bottom: 20) : EdgeInsets.zero,
+                        child: Row(
+                          children: [
+                            const SizedBox.square(
+                              dimension: 50,
+                              child: Center(
+                                child: Icon(Icons.menu)
+                              ),
+                            ),
+                            Expanded(
+                              child: AnimatedSwitcher(
+                                duration: ti.globalDuration,
+                                child: Text(
+                                  _title == "" ? widget.appName : _title,
+                                  key: ValueKey(_title == "" ? widget.appName : _title),
+                                ),
+                              ),
+                            ),
+                            if(widget.floatingItem != null && vertical) widget.floatingItem!
+                          ],
+                        ),
+                      )
+                    )
                   ),
                   const Spacer(),
-                  ...widget.navItems, //TODO: scroll
+                  ListView(
+                    itemExtent: 50,
+                    children: widget.navItems,
+                  ),
                   const Spacer(),
+                  if(widget.floatingItem != null && !vertical) widget.floatingItem!,
                   ...widget.bottomNavItems
                 ],
               ),
@@ -141,25 +179,17 @@ class FrameState extends State<Frame> {
 }
 
 class Nav extends StatelessWidget{
-  
   final Widget icon;
   final String name;
-  final Function() onTap;
-  final bool vertical;
+  final String routeName;
+  //Only set to true if item is the last item in Frame.bottomNavItems
   final bool lastItem;
-  final bool topItem;
-  final bool expanded;
-  final bool selected;
 
   const Nav({super.key,
       required this.icon,
       required this.name,
-      required this.onTap,
-      required this.vertical,
-      required this.expanded,
-      this.topItem = false,
-      this.lastItem = false,
-      this.selected = false});
+      required this.routeName,
+      this.lastItem = false});
   
   @override
   Widget build(BuildContext context) {
@@ -167,16 +197,15 @@ class Nav extends StatelessWidget{
     var inner = AnimatedContainer(
       duration: ti.globalDuration,
       margin: (){
-        EdgeInsets margin = vertical ? EdgeInsets.zero : const EdgeInsets.only(right: 20);
-        if(vertical && (topItem && !expanded) || lastItem){
+        EdgeInsets margin = ti.frame.vertical ? EdgeInsets.zero : const EdgeInsets.only(right: 20);
+        if(ti.frame.vertical && lastItem){
           margin = margin += const EdgeInsets.only(bottom: 20);
         }
         return margin;
       }(),
-      // margin: vertical && ((topItem && !expanded) || lastItem) ? const EdgeInsets.only(bottom: 20) : EdgeInsets.zero,
       child: AnimatedAlign(
         duration: ti.globalDuration,
-        alignment: expanded ? Alignment.center : Alignment.centerLeft,
+        alignment: ti.frame.expanded ? Alignment.center : Alignment.centerLeft,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -190,8 +219,8 @@ class Nav extends StatelessWidget{
                   icon,
                   AnimatedContainer(
                     duration: ti.globalDuration,
-                    margin: selected ? const EdgeInsets.symmetric(vertical: 3) : EdgeInsets.zero,
-                    height: selected ? 2 : 0,
+                    margin: ti.frame.selection == routeName ? const EdgeInsets.symmetric(vertical: 3) : EdgeInsets.zero,
+                    height: ti.frame.selection == routeName ? 2 : 0,
                     width: 5,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200)),
@@ -214,9 +243,63 @@ class Nav extends StatelessWidget{
       child: InkResponse(
         highlightShape: BoxShape.rectangle,
         containedInkWell: true,
-        onTap: onTap,
+        onTap: () => ti.nav.popAndPushNamed(routeName),
         child: inner,
       )
+    );
+  }
+}
+
+class FloatingNav extends StatelessWidget{
+  final String title;
+  final Widget icon;
+  final void Function() onTap;
+
+  const FloatingNav({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.onTap
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var ti = TopInherited.of(context);
+    Widget child;
+    if(ti.frame.vertical){
+      child = SizedBox.square(
+        dimension: 50,
+        child: Center(
+          child: icon
+        )
+      );
+    }else{
+      child = AnimatedAlign(
+        duration: ti.globalDuration,
+        alignment: ti.frame.expanded ? Alignment.center : Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox.square(
+              dimension: 50,
+              child: Center(
+                child: icon
+              )
+            ),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium,
+            )
+          ],
+        )
+      );
+    }
+    return InkResponse(
+      onTap: onTap,
+      containedInkWell: true,
+      highlightShape: BoxShape.rectangle,
+      child: child,
     );
   }
 }
