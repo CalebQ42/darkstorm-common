@@ -92,7 +92,7 @@ class FrameState extends State<Frame> {
     var media = MediaQuery.of(context);
     vertical = media.size.height > media.size.width;
     verticalTranslation = (media.size.height / 2) - 50;
-    var ti = TopInherited.of(context);
+    var ti = TopResources.of(context);
     var navHeight = 50 + (widget.navItems.length * 50) + (widget.bottomNavItems.length * 50);
     if(!vertical && widget.floatingItem != null) navHeight += 50;
     var navExpand = false;
@@ -212,7 +212,7 @@ class Nav extends StatelessWidget{
   
   @override
   Widget build(BuildContext context) {
-    var ti = TopInherited.of(context);
+    var ti = TopResources.of(context);
     var inner = AnimatedContainer(
       duration: ti.globalDuration,
       margin: (){
@@ -283,7 +283,7 @@ class FloatingNav extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    var ti = TopInherited.of(context);
+    var ti = TopResources.of(context);
     Widget child;
     if(ti.frame.vertical){
       child = SizedBox.square(

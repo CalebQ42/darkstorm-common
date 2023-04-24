@@ -5,7 +5,7 @@ import 'package:darkstorm_common/observatory.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-mixin TopInherited on InheritedWidget{
+mixin TopResources{
   final Duration globalDuration = const Duration(milliseconds: 300);
 
   late final Observatory _observatory = Observatory(this);
@@ -24,5 +24,14 @@ mixin TopInherited on InheritedWidget{
     return Platform.isAndroid || Platform.isIOS;
   }
 
-  static TopInherited of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<TopInherited>()!;
+  static TopResources of(BuildContext context) => context.getInheritedWidgetOfExactType<TopInherit>()!.resources;
+}
+
+class TopInherit extends InheritedWidget{
+  final TopResources resources;
+
+  const TopInherit({super.key, required this.resources, required super.child});
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget _) => false;
 }

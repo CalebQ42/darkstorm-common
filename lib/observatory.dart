@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class Observatory extends NavigatorObserver{
 
   List<Route> routeHistory = [];
-  TopInherited ti;
+  TopResources ti;
 
   Observatory(this.ti);
 

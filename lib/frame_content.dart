@@ -49,7 +49,7 @@ class FrameContentState extends State<FrameContent> {
           children: [
             widget.child ?? Container(),
             AnimatedSwitcher(
-              duration: TopInherited.of(context).globalDuration,
+              duration: TopResources.of(context).globalDuration,
               transitionBuilder: (child, animation) =>
                 FadeTransition(
                   opacity: animation,
@@ -98,11 +98,11 @@ class FrameSpeedDialState extends State<FrameSpeedDial> with SingleTickerProvide
     _expanded = b;
     if(_expanded){
       anim?.animateTo(1.0,
-        duration: TopInherited.of(context).globalDuration,
+        duration: TopResources.of(context).globalDuration,
       );
     }else{
       anim?.animateBack(0,
-        duration: TopInherited.of(context).globalDuration,
+        duration: TopResources.of(context).globalDuration,
       );
     }
     setState(() {});
@@ -113,7 +113,7 @@ class FrameSpeedDialState extends State<FrameSpeedDial> with SingleTickerProvide
   @override
   Widget build(BuildContext context) {
     anim ??= AnimationController(vsync: this);
-    var ti = TopInherited.of(context);
+    var ti = TopResources.of(context);
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
