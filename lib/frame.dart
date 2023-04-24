@@ -33,12 +33,16 @@ class Frame extends StatefulWidget{
 }
 
 class FrameState extends State<Frame> {
+  ScrollController scrol = ScrollController();
   double _verticalTranslation = 0;
 
   bool _expanded = false;
   bool get expanded => _expanded;
   set expanded(bool e) {
     if(e == _expanded) return;
+    if(!e && scrol.hasClients){
+      scrol.animateTo(0, duration: TopResources.of(context).globalDuration, curve: Curves.linear);
+    }
     setState(() => _expanded = e);
     for(var i in widget.navItems){
       (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
@@ -153,6 +157,8 @@ class FrameState extends State<Frame> {
               child: navExpand ? Column(
                 children: navItems,
               ) : ListView(
+                controller: scrol,
+                physics: (vertical && expanded) || !vertical ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
                 children: navItems,
               ),
             ),
@@ -191,7 +197,7 @@ class FrameState extends State<Frame> {
       duration: ti.globalDuration,
       margin: (){
         EdgeInsets margin = ti.frame.vertical ? EdgeInsets.zero : const EdgeInsets.only(right: 20);
-        if(ti.frame.vertical){
+        if(ti.frame.vertical && !ti.frame.expanded){
           margin = margin += const EdgeInsets.only(bottom: 20);
         }
         return margin;

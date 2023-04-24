@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0-pre.7
+
+* Remove ability to scroll nav items when nav drawer is collapsed when vertical.
+  * Also scrolls back to the top when collapsed.
+
 ## 1.0.0-pre.6
 
 * Forgot to actually add the improved top nav to the UI (oops).
