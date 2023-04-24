@@ -93,6 +93,64 @@ class FrameState extends State<Frame> {
     vertical = media.size.height > media.size.width;
     verticalTranslation = (media.size.height / 2) - 50;
     var ti = TopInherited.of(context);
+    var navHeight = 50 + (widget.navItems.length * 50) + (widget.bottomNavItems.length * 50);
+    if(!vertical && widget.floatingItem != null) navHeight += 50;
+    var navExpand = false;
+    if(vertical){
+      navExpand = navHeight < media.size.height/2;
+    }else{
+      navExpand = navHeight < media.size.height;
+    }
+    var navItems = [
+      InkResponse(
+        onTap: () => setState(() => expanded = !expanded),
+        highlightShape: BoxShape.rectangle,
+        containedInkWell: true,
+        child: SizedOverflowBox(
+          size: const Size.fromHeight(50),
+          child: AnimatedContainer(
+            duration: ti.globalDuration,
+            margin: vertical && !expanded ? const EdgeInsets.only(bottom: 20) : EdgeInsets.zero,
+            child: Row(
+              children: [
+                const SizedBox.square(
+                  dimension: 50,
+                  child: Center(
+                    child: Icon(Icons.menu)
+                  ),
+                ),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: ti.globalDuration,
+                    child: Text(
+                      _title == "" ? widget.appName : _title,
+                      key: ValueKey(_title == "" ? widget.appName : _title),
+                    ),
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: ti.globalDuration,
+                  transitionBuilder: (child, anim) =>
+                    SizeTransition(
+                      axis: Axis.horizontal,
+                      axisAlignment: -1.0,
+                      sizeFactor: anim,
+                      child: child,
+                    ),
+                  child: widget.floatingItem != null && vertical ?
+                    widget.floatingItem! : null
+                )
+              ],
+            ),
+          )
+        )
+      ),
+      if(navExpand) const Spacer(),
+      ...widget.navItems,
+      if(navExpand) const Spacer(),
+      if(widget.floatingItem != null && !vertical) widget.floatingItem!,
+      ...widget.bottomNavItems
+    ];
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
@@ -102,49 +160,10 @@ class FrameState extends State<Frame> {
               duration: ti.globalDuration,
               width: vertical ? media.size.width : 270,
               height: vertical ? (media.size.height / 2) : media.size.height,
-              child: Column(
-                children: [
-                  InkResponse(
-                    onTap: () => setState(() => expanded = !expanded),
-                    highlightShape: BoxShape.rectangle,
-                    containedInkWell: true,
-                    child: SizedOverflowBox(
-                      size: const Size.fromHeight(50),
-                      child: AnimatedContainer(
-                        duration: ti.globalDuration,
-                        margin: vertical && !expanded ? const EdgeInsets.only(bottom: 20) : EdgeInsets.zero,
-                        child: Row(
-                          children: [
-                            const SizedBox.square(
-                              dimension: 50,
-                              child: Center(
-                                child: Icon(Icons.menu)
-                              ),
-                            ),
-                            Expanded(
-                              child: AnimatedSwitcher(
-                                duration: ti.globalDuration,
-                                child: Text(
-                                  _title == "" ? widget.appName : _title,
-                                  key: ValueKey(_title == "" ? widget.appName : _title),
-                                ),
-                              ),
-                            ),
-                            if(widget.floatingItem != null && vertical) widget.floatingItem!
-                          ],
-                        ),
-                      )
-                    )
-                  ),
-                  const Spacer(),
-                  ListView(
-                    itemExtent: 50,
-                    children: widget.navItems,
-                  ),
-                  const Spacer(),
-                  if(widget.floatingItem != null && !vertical) widget.floatingItem!,
-                  ...widget.bottomNavItems
-                ],
+              child: navExpand ? Column(
+                children: navItems,
+              ) : ListView(
+                children: navItems,
               ),
             ),
             AnimatedContainer(
