@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 mixin TopResources{
-  final Duration globalDuration = const Duration(milliseconds: 300);
+  Duration globalDuration = const Duration(milliseconds: 300);
 
   late final Observatory _observatory = Observatory(this);
   final GlobalKey<FrameState> _frameKey = GlobalKey();
@@ -15,6 +15,7 @@ mixin TopResources{
   FrameState get frame => _frameKey.currentState!;
   NavigatorState get nav => _navKey.currentState!;
   GlobalKey<NavigatorState> get navKey => _navKey;
+  GlobalKey<FrameState> get frameKey => _frameKey;
   Observatory get observatory => _observatory;
 
   bool get isMobile {
