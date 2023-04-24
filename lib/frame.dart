@@ -44,15 +44,7 @@ class FrameState extends State<Frame> {
       scrol.animateTo(0, duration: TopResources.of(context).globalDuration, curve: Curves.linear);
     }
     setState(() => _expanded = e);
-    for(var i in widget.navItems){
-      (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
-    }
-    for(var i in widget.bottomNavItems){
-      (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
-    }
-    if(widget.floatingItem != null){
-      (widget.floatingItem!.key! as GlobalKey<_FloatingNavState>).currentState?.setState((){});
-    }
+    updateItems();
   }
 
   bool _vertical = false;
@@ -60,15 +52,7 @@ class FrameState extends State<Frame> {
   set vertical(bool v){
     if(_vertical != v){
       _vertical = v;
-      for(var i in widget.navItems){
-        (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
-      }
-      for(var i in widget.bottomNavItems){
-        (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
-      }
-      if(widget.floatingItem != null){
-        (widget.floatingItem!.key! as GlobalKey<_FloatingNavState>).currentState?.setState((){});
-      }
+      updateItems();
     }
   }
 
@@ -76,9 +60,8 @@ class FrameState extends State<Frame> {
   String get selection => _selection;
   set selection(String sel) =>
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _selection = sel;
-      });
+      _selection = sel;
+      updateItems();
     });
 
   String _title = "";
@@ -89,6 +72,18 @@ class FrameState extends State<Frame> {
     });
   }
   bool get hidden => widget.hideBar != null ? widget.hideBar!(_selection) : false;
+
+  void updateItems(){
+      for(var i in widget.navItems){
+        (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
+      }
+      for(var i in widget.bottomNavItems){
+        (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
+      }
+      if(widget.floatingItem != null){
+        (widget.floatingItem!.key! as GlobalKey<_FloatingNavState>).currentState?.setState((){});
+      }
+  }
 
   Future<bool> handleBackpress() async{
     if(_expanded){

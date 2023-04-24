@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-pre.8
+
+* Selection indicator should properly update now.
+
 ## 1.0.0-pre.7
 
 * Remove ability to scroll nav items when nav drawer is collapsed when vertical.
