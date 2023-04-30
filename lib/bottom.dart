@@ -3,24 +3,35 @@ import 'package:flutter/material.dart';
 class Bottom extends StatefulWidget{
 
   final List<Widget> Function(BuildContext)? buttons;
+  final Widget? bottom;
   final Color? background;
   final Widget Function(BuildContext)? child;
+  final List<Widget> Function(BuildContext)? children;
+  final Widget Function(BuildContext, int, Animation<double>)? itemBuilder;
+  final int itemBuilderCount;
   final bool padding;
   final bool dismissible;
-  final bool scroll;
+  final bool safeArea;
 
   final GlobalKey<_ButtonState> _butKey = GlobalKey();
+  final GlobalKey<AnimatedListState> listKey = GlobalKey();
 
 
   Bottom({
     this.buttons,
+    this.bottom,
     this.background,
-    required this.child,
+    this.child,
+    this.children,
+    this.itemBuilder,
+    this.itemBuilderCount = 0,
     this.padding = true,
     this.dismissible = true,
-    this.scroll = true,
+    this.safeArea = false,
     super.key
-  });
+  }){
+    if(children == null && itemBuilder == null && child == null) throw Exception("Either child, children, or itemBuilder must be provided");
+  }
 
   @override
   State<Bottom> createState() => BottomState();
@@ -36,14 +47,17 @@ class Bottom extends StatefulWidget{
       backgroundColor: background,
       isScrollControlled: true,
       isDismissible: dismissible,
-      useSafeArea: true,
+      useSafeArea: safeArea,
     );
 }
 
 class BottomState extends State<Bottom> {
+  void update() => setState((){});
 
   @override
   Widget build(BuildContext context) {
+    List<Widget>? children;
+    if(widget.children != null) children = widget.children!(context);
     var child = Padding(
       padding: widget.padding ? const EdgeInsets.only(
         top: 10,
@@ -51,19 +65,25 @@ class BottomState extends State<Bottom> {
         right: 10,
         bottom: 15
       ) : EdgeInsets.zero,
-      child: widget.child!(context)
+      child: ConstrainedBox(
+        constraints: BoxConstraints.loose(Size.fromHeight(MediaQuery.of(context).size.height * 0.8)),
+        child: widget.child != null ? widget.child!(context) : AnimatedList(
+          key: widget.listKey,
+          initialItemCount: widget.itemBuilder != null ? widget.itemBuilderCount : children!.length,
+          shrinkWrap: true,
+          itemBuilder: widget.itemBuilder ?? (context, i, anim) =>
+            children![i]
+        )
+      )
     );
     return Wrap(
       children: [
-        widget.scroll ? SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          primary: false,
-          child: child
-        ) : child,
+        child,
         if(widget.buttons != null) _BottomButtons(
           key: widget._butKey,
           builder: widget.buttons!,
-        )
+        ),
+        if(widget.bottom != null) widget.bottom!,
       ],
     );
   }

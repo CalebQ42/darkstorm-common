@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0-pre.9
+
+* Re-worked Bottom to make it more flexible and to prevent infinite height errors.
+  * Now works with either child, children, or itemBuilder as the main body is now an AnimatedList
+* Fixed issues with Frame not hiding properly.
+
 ## 1.0.0-pre.8
 
 * Selection indicator should properly update now.

@@ -60,7 +60,8 @@ class FrameState extends State<Frame> {
   String get selection => _selection;
   set selection(String sel) =>
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _selection = sel;
+      if(sel == _selection || sel == "") return;
+      setState(() => _selection = sel);
       updateItems();
     });
 
@@ -71,7 +72,8 @@ class FrameState extends State<Frame> {
       setState(() => _title = t);
     });
   }
-  bool get hidden => widget.hideBar != null ? widget.hideBar!(_selection) : false;
+
+  bool get hidden => _selection == "" ? true : widget.hideBar != null ? widget.hideBar!(_selection) : false;
 
   void updateItems(){
       for(var i in widget.navItems){
