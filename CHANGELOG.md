@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-pre.11
+
+* Added IntroScreen and IntroPage
+
 ## 1.0.0-pre.10
 
 * Tweaked Bottom so content only takes up 65% of the screen instead of 80%
