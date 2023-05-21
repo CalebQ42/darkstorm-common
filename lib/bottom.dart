@@ -66,7 +66,7 @@ class BottomState extends State<Bottom> {
         bottom: 15
       ) : EdgeInsets.zero,
       child: ConstrainedBox(
-        constraints: BoxConstraints.loose(Size.fromHeight(MediaQuery.of(context).size.height * 0.8)),
+        constraints: BoxConstraints.loose(Size.fromHeight(MediaQuery.of(context).size.height * 0.65)),
         child: widget.child != null ? widget.child!(context) : AnimatedList(
           key: widget.listKey,
           initialItemCount: widget.itemBuilder != null ? widget.itemBuilderCount : children!.length,
