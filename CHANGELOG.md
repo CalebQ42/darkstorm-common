@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0-pre.10
+
+* Tweaked Bottom so content only takes up 65% of the screen instead of 80%
+  * 80% was too large when you consider that the 65% is only the content and doesn't include the buttons or padding.
+
 ## 1.0.0-pre.9
 
 * Re-worked Bottom to make it more flexible and to prevent infinite height errors.
