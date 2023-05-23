@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-pre.12
+
+* Added generic type to TopInherit for easier TopResources.of construction
+
 ## 1.0.0-pre.11
 
 * Added IntroScreen and IntroPage

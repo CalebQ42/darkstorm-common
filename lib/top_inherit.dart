@@ -28,8 +28,8 @@ mixin TopResources{
   static TopResources of(BuildContext context) => context.getInheritedWidgetOfExactType<TopInherit>()!.resources;
 }
 
-class TopInherit extends InheritedWidget{
-  final TopResources resources;
+class TopInherit<T extends TopResources> extends InheritedWidget{
+  final T resources;
 
   const TopInherit({super.key, required this.resources, required super.child});
 
