@@ -1,3 +1,4 @@
+import 'package:darkstorm_common/top_inherit.dart';
 import 'package:flutter/material.dart';
 
 class Bottom extends StatefulWidget{
@@ -42,12 +43,17 @@ class Bottom extends StatefulWidget{
   
   void show(BuildContext context) =>
     showModalBottomSheet(
-      context: context,
+      routeSettings: const RouteSettings(name: "BottomDialog"),
+      context: TopResources.of(context).nav.context,
       builder: (c) => this,
       backgroundColor: background,
       isScrollControlled: true,
       isDismissible: dismissible,
       useSafeArea: safeArea,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.65,
+        maxWidth: 600
+      )
     );
 }
 
@@ -65,16 +71,13 @@ class BottomState extends State<Bottom> {
         right: 10,
         bottom: 15
       ) : EdgeInsets.zero,
-      child: ConstrainedBox(
-        constraints: BoxConstraints.loose(Size.fromHeight(MediaQuery.of(context).size.height * 0.65)),
-        child: widget.child != null ? widget.child!(context) : AnimatedList(
+      child: widget.child != null ? widget.child!(context) : AnimatedList(
           key: widget.listKey,
           initialItemCount: widget.itemBuilder != null ? widget.itemBuilderCount : children!.length,
           shrinkWrap: true,
           itemBuilder: widget.itemBuilder ?? (context, i, anim) =>
             children![i]
         )
-      )
     );
     return Wrap(
       children: [

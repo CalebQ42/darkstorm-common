@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0-pre.14
+
+* When using Bottom, the dialog is now dismissible by tapping on the nav options.
+* Bottom's constraints are now applied to the dialog itself instead of the contents.
+  * Fixes issues of abundant whitespace after the content.
+* FloatingNavItem now properly shows.
+
 ## 1.0.0-pre.13
 
 * Removed generic type from TopInherit because it breaks context.getInheritedWidgetOfExactType

@@ -56,10 +56,18 @@ class FrameState extends State<Frame> {
     }
   }
 
+  bool dialogShown = false;
+
   String _selection = "";
   String get selection => _selection;
   set selection(String sel) =>
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(sel == "BottomDialog"){
+        setState(() => dialogShown = true);
+        return;
+      }else if(dialogShown){
+        setState(() => dialogShown = false);
+      }
       if(sel == _selection || sel == "") return;
       setState(() => _selection = sel);
       updateItems();
@@ -147,17 +155,33 @@ class FrameState extends State<Frame> {
       body: SafeArea(
         child: Stack(
           children: [
-            AnimatedContainer(
-              duration: ti.globalDuration,
-              width: vertical ? media.size.width : 270,
-              height: vertical ? (media.size.height / 2) : media.size.height,
-              child: navExpand ? Column(
-                children: navItems,
-              ) : ListView(
-                controller: scrol,
-                physics: (vertical && expanded) || !vertical ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
-                children: navItems,
-              ),
+            Stack(
+              children: [
+                AnimatedContainer(
+                  duration: ti.globalDuration,
+                  width: vertical ? media.size.width : 270,
+                  height: vertical ? (media.size.height / 2) : media.size.height,
+                  child: navExpand ? Column(
+                    children: navItems,
+                  ) : ListView(
+                    controller: scrol,
+                    physics: (vertical && expanded) || !vertical ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
+                    children: navItems,
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: ti.globalDuration,
+                  child: dialogShown ? GestureDetector(
+                    onTap: () {
+                      setState(() => dialogShown = false);
+                      ti.nav.pop();
+                    },
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                  ) : null,
+                )
+              ]
             ),
             AnimatedContainer(
               transform: transform,
@@ -182,7 +206,7 @@ class FrameState extends State<Frame> {
                   ),
                 ]
               )
-            )
+            ),
           ],
         )
       )
@@ -195,7 +219,7 @@ class FrameState extends State<Frame> {
       margin: (){
         EdgeInsets margin = ti.frame.vertical ? EdgeInsets.zero : const EdgeInsets.only(right: 20);
         if(ti.frame.vertical && !ti.frame.expanded){
-          margin = margin += const EdgeInsets.only(bottom: 20);
+          margin += const EdgeInsets.only(bottom: 20);
         }
         return margin;
       }(),
@@ -220,6 +244,7 @@ class FrameState extends State<Frame> {
     );
     if(widget.floatingItem != null){
       inner = Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: inner
@@ -233,7 +258,7 @@ class FrameState extends State<Frame> {
                 axisAlignment: -1.0,
                 child: child
               ),
-            child: vertical && ti.frame.expanded ?
+            child: vertical && !ti.frame.expanded ?
               widget.floatingItem : null
           )
         ],
