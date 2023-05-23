@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-pre.18
+
+* Fixed intro pages not updating their contents properly.
+
 ## 1.0.0-pre.17
 
 * Don't force disable dialogShow when tapping nav items when dialog is open, just pop.

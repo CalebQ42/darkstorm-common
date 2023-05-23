@@ -90,8 +90,8 @@ class _IntroState extends State<IntroScreen> {
 class IntroPage extends StatefulWidget {
   final Widget title;
   final Widget? subtext;
-  final List<Widget>? items;
-  final Widget? body;
+  final List<Widget> Function(BuildContext)? items;
+  final Widget Function(BuildContext)? body;
 
   const IntroPage({
     super.key,
@@ -109,8 +109,9 @@ class IntroPageState extends State<IntroPage> {
   void update() => setState(() {});
 
   @override
-  Widget build(BuildContext context) =>
-    Column(
+  Widget build(BuildContext context) {
+    print("built");
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -121,12 +122,14 @@ class IntroPageState extends State<IntroPage> {
         if(widget.subtext != null) Container(height: 10),
         if(widget.subtext != null) DefaultTextStyle(
           style: Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
+          textAlign: TextAlign.justify,
           child: widget.subtext!
         ),
         if(widget.body != null || widget.items != null) Container(height: 20),
-        if(widget.body != null) widget.body!,
-        if(widget.items != null) ...widget.items!,
+        if(widget.body != null) widget.body!(context),
+        if(widget.items != null) ...widget.items!(context),
         Container(height: 60)
       ],
     );
+  }
 }
