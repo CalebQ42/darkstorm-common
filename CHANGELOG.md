@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-pre.16
+
+* When a Bottom is show, the nav bar is de-expanded.
+
 ## 1.0.0-pre.15
 
 * Bottom's constraints have been moved back to content instead of the dialog itself.

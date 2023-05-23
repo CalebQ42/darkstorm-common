@@ -64,7 +64,10 @@ class FrameState extends State<Frame> {
   set selection(String sel) =>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if(sel == "BottomDialog"){
-        setState(() => dialogShown = true);
+        setState(() {
+          dialogShown = true;
+          expanded = false;
+        });
         return;
       }else if(dialogShown){
         setState(() => dialogShown = false);
