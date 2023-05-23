@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0-pre.17
+
+* Don't force disable dialogShow when tapping nav items when dialog is open, just pop.
+
 ## 1.0.0-pre.16
 
 * When a Bottom is show, the nav bar is de-expanded.

@@ -183,10 +183,8 @@ class FrameState extends State<Frame> {
                 AnimatedSwitcher(
                   duration: ti.globalDuration,
                   child: dialogShown ? GestureDetector(
-                    onTap: () {
-                      setState(() => dialogShown = false);
-                      ti.nav.pop();
-                    },
+                    onTap: () =>
+                      ti.nav.pop(),
                     child: Container(
                       color: Colors.black.withOpacity(0.5),
                     ),
