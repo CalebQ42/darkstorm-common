@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.0-pre.15
+
+* Bottom's constraints have been moved back to content instead of the dialog itself.
+  * Moving the constraints to the box itself caused buttons to now show when properly
+* Bottom's child is now just added to the list view instead of displayed standalone.
+  * Fixes excess whitespace, but might cause some weird scrolling issues. I'll need to test this.
+* Fixed some issues with Frame
+  * Changing from scrolling to non-scrolling nav items now works better and animates properly
+    * Fixes a fairly inconsequential overflow error when switching from a vertical layout that scrolls to horizontal that doesn't
+  * FloatingNavItem no longer animates away when switching from vertical to horizontal.
+    * This was causing 2 instances of the button showing at once, causing an error since they shared a GlobalKey.
+* Moved Nav and FloatingNavItem to their own file instead of being with Frame.
+
 ## 1.0.0-pre.14
 
 * When using Bottom, the dialog is now dismissible by tapping on the nav options.

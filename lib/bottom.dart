@@ -50,10 +50,6 @@ class Bottom extends StatefulWidget{
       isScrollControlled: true,
       isDismissible: dismissible,
       useSafeArea: safeArea,
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.65,
-        maxWidth: 600
-      )
     );
 }
 
@@ -63,21 +59,30 @@ class BottomState extends State<Bottom> {
   @override
   Widget build(BuildContext context) {
     List<Widget>? children;
-    if(widget.children != null) children = widget.children!(context);
-    var child = Padding(
-      padding: widget.padding ? const EdgeInsets.only(
-        top: 10,
-        left: 10,
-        right: 10,
-        bottom: 15
-      ) : EdgeInsets.zero,
-      child: widget.child != null ? widget.child!(context) : AnimatedList(
+    if(widget.children != null){
+      children = widget.children!(context);
+    }else if(widget.child != null){
+      children = [widget.child!(context)];
+    }
+    var child = ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.65,
+      ),
+      child: Padding(
+        padding: widget.padding ? const EdgeInsets.only(
+          top: 10,
+          left: 10,
+          right: 10,
+          bottom: 15
+        ) : EdgeInsets.zero,
+        child: AnimatedList(
           key: widget.listKey,
           initialItemCount: widget.itemBuilder != null ? widget.itemBuilderCount : children!.length,
           shrinkWrap: true,
           itemBuilder: widget.itemBuilder ?? (context, i, anim) =>
             children![i]
         )
+      )
     );
     return Wrap(
       children: [

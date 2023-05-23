@@ -1,3 +1,4 @@
+import 'package:darkstorm_common/nav.dart';
 import 'package:darkstorm_common/top_inherit.dart';
 import 'package:flutter/material.dart';
 
@@ -85,13 +86,13 @@ class FrameState extends State<Frame> {
 
   void updateItems(){
       for(var i in widget.navItems){
-        (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
+        (i.key! as GlobalKey<NavState>).currentState?.setState(() {});
       }
       for(var i in widget.bottomNavItems){
-        (i.key! as GlobalKey<_NavState>).currentState?.setState(() {});
+        (i.key! as GlobalKey<NavState>).currentState?.setState(() {});
       }
       if(widget.floatingItem != null){
-        (widget.floatingItem!.key! as GlobalKey<_FloatingNavState>).currentState?.setState((){});
+        (widget.floatingItem!.key! as GlobalKey<FloatingNavState>).currentState?.setState((){});
       }
   }
 
@@ -136,17 +137,25 @@ class FrameState extends State<Frame> {
     var ti = TopResources.of(context);
     var navHeight = 50 + (widget.navItems.length * 50) + (widget.bottomNavItems.length * 50);
     if(!vertical && widget.floatingItem != null) navHeight += 50;
-    var navExpand = false;
+    var navExpand = 0.0;
     if(vertical){
-      navExpand = navHeight < media.size.height/2;
+      navExpand = media.size.height/2 - navHeight;
     }else{
-      navExpand = navHeight < media.size.height;
+      navExpand = media.size.height - navHeight;
     }
+    navExpand /= 2;
+    if(navExpand < 0) navExpand = 0;
     var navItems = [
       topNav(ti),
-      if(navExpand) const Spacer(),
+      AnimatedContainer(
+        duration: ti.globalDuration,
+        height: navExpand
+      ),
       ...widget.navItems,
-      if(navExpand) const Spacer(),
+      AnimatedContainer(
+        duration: ti.globalDuration,
+        height: navExpand
+      ),
       if(widget.floatingItem != null && !vertical) widget.floatingItem!,
       ...widget.bottomNavItems
     ];
@@ -155,15 +164,14 @@ class FrameState extends State<Frame> {
       body: SafeArea(
         child: Stack(
           children: [
+            //Navigation
             Stack(
               children: [
                 AnimatedContainer(
                   duration: ti.globalDuration,
                   width: vertical ? media.size.width : 270,
                   height: vertical ? (media.size.height / 2) : media.size.height,
-                  child: navExpand ? Column(
-                    children: navItems,
-                  ) : ListView(
+                  child: ListView(
                     controller: scrol,
                     physics: (vertical && expanded) || !vertical ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
                     children: navItems,
@@ -183,6 +191,7 @@ class FrameState extends State<Frame> {
                 )
               ]
             ),
+            //Content
             AnimatedContainer(
               transform: transform,
               duration: ti.globalDuration,
@@ -249,7 +258,7 @@ class FrameState extends State<Frame> {
           Expanded(
             child: inner
           ),
-          AnimatedSwitcher(
+          if(vertical) AnimatedSwitcher(
             duration: ti.globalDuration,
             transitionBuilder: (child, anim) =>
               SizeTransition(
@@ -258,7 +267,7 @@ class FrameState extends State<Frame> {
                 axisAlignment: -1.0,
                 child: child
               ),
-            child: vertical && !ti.frame.expanded ?
+            child: !ti.frame.expanded ?
               widget.floatingItem : null
           )
         ],
@@ -273,146 +282,6 @@ class FrameState extends State<Frame> {
         onTap: () => expanded = !_expanded,
         child: inner,
       )
-    );
-  }
-}
-
-class Nav extends StatefulWidget{
-  final Widget icon;
-  final String name;
-  final String routeName;
-  //Only set to true if item is the last item in Frame.bottomNavItems
-  final bool lastItem;
-
-  Nav({
-    required this.icon,
-    required this.name,
-    required this.routeName,
-    this.lastItem = false
-  }) : super(key: GlobalKey<_NavState>());
-
-  @override
-  State<Nav> createState() => _NavState();
-}
-
-class _NavState extends State<Nav> {
-  @override
-  Widget build(BuildContext context) {
-    var ti = TopResources.of(context);
-    var inner = AnimatedContainer(
-      duration: ti.globalDuration,
-      margin: (){
-        EdgeInsets margin = ti.frame.vertical ? EdgeInsets.zero : const EdgeInsets.only(right: 20);
-        if(ti.frame.vertical && widget.lastItem){
-          margin = margin += const EdgeInsets.only(bottom: 20);
-        }
-        return margin;
-      }(),
-      child: AnimatedAlign(
-        duration: ti.globalDuration,
-        alignment: ti.frame.expanded ? Alignment.center : Alignment.centerLeft,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 50,
-              width: 50,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  widget.icon,
-                  AnimatedContainer(
-                    duration: ti.globalDuration,
-                    margin: ti.frame.selection == widget.routeName ? const EdgeInsets.symmetric(vertical: 3) : EdgeInsets.zero,
-                    height: ti.frame.selection == widget.routeName ? 2 : 0,
-                    width: 5,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200)),
-                      color: Colors.white
-                    ),
-                  )
-                ]
-              )
-            ),
-            Text(widget.name,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ]
-        )
-      )
-    );
-    return SizedOverflowBox(
-      alignment: Alignment.topLeft,
-      size: const Size.fromHeight(50),
-      child: InkResponse(
-        highlightShape: BoxShape.rectangle,
-        containedInkWell: true,
-        onTap: () {
-          ti.nav.pushNamed(widget.routeName);
-          Frame.of(context).title = widget.name;
-          Frame.of(context).expanded = false;
-        },
-        child: inner,
-      )
-    );
-  }
-}
-
-class FloatingNav extends StatefulWidget{
-  final String title;
-  final Widget icon;
-  final void Function() onTap;
-
-  FloatingNav({
-    required this.title,
-    required this.icon,
-    required this.onTap
-  }) : super(key: GlobalKey<_FloatingNavState>());
-
-  @override
-  State<FloatingNav> createState() => _FloatingNavState();
-}
-
-class _FloatingNavState extends State<FloatingNav> {
-  @override
-  Widget build(BuildContext context) {
-    var ti = TopResources.of(context);
-    Widget child;
-    if(ti.frame.vertical){
-      child = SizedBox.square(
-        dimension: 50,
-        child: Center(
-          child: widget.icon
-        )
-      );
-    }else{
-      child = AnimatedAlign(
-        duration: ti.globalDuration,
-        alignment: ti.frame.expanded ? Alignment.center : Alignment.centerLeft,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox.square(
-              dimension: 50,
-              child: Center(
-                child: widget.icon
-              )
-            ),
-            Text(
-              widget.title,
-              style: Theme.of(context).textTheme.titleMedium,
-            )
-          ],
-        )
-      );
-    }
-    return InkResponse(
-      onTap: widget.onTap,
-      containedInkWell: true,
-      highlightShape: BoxShape.rectangle,
-      child: child,
     );
   }
 }
