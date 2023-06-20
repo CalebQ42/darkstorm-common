@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0
+
+* Force horzontal layout on wide screens (>550)
+* Account for view padding for Frame.
+  * This is particularly an issue on Samsung devices as the view padding includes the status bar.
+* Added quicker transitionDuration to TopResources
+  * Used mainly for the nav items in Frame when the view size changes.
+* Nav items don't change the route if it's the current route
+
 ## 1.0.0-pre.18
 
 * Fixed intro pages not updating their contents properly.
