@@ -5,7 +5,7 @@ repository: https://github.com/CalebQ42/darkstorm-common
 homepage: https://darkstorm.tech
 
 environment:
-  sdk: '>=3.0.0-417.2.beta <4.0.0'
+  sdk: ^3.0.0
   flutter: ">=1.17.0"
 
 dependencies:
