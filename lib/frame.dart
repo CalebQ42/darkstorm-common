@@ -136,27 +136,30 @@ class FrameState extends State<Frame> {
   Widget build(BuildContext context){
     var media = MediaQuery.of(context);
     vertical = media.size.height > media.size.width;
+    if(vertical && media.size.width > 550) vertical = false;
     _verticalTranslation = (media.size.height / 2) - 50;
     var ti = TopResources.of(context);
     var navHeight = 50 + (widget.navItems.length * 50) + (widget.bottomNavItems.length * 50);
     if(!vertical && widget.floatingItem != null) navHeight += 50;
     var navExpand = 0.0;
+    var verticalPadding = media.padding.top + media.padding.bottom + media.viewInsets.top + media.viewInsets.bottom;
+    var horizontalPadding = media.padding.left + media.padding.right + media.viewInsets.left + media.viewInsets.right;
     if(vertical){
-      navExpand = media.size.height/2 - navHeight;
+      navExpand = media.size.height/2 - navHeight - verticalPadding;
     }else{
-      navExpand = media.size.height - navHeight;
+      navExpand = media.size.height - navHeight - verticalPadding;
     }
     navExpand /= 2;
     if(navExpand < 0) navExpand = 0;
     var navItems = [
       topNav(ti),
       AnimatedContainer(
-        duration: ti.globalDuration,
+        duration: ti.transitionDuration,
         height: navExpand
       ),
       ...widget.navItems,
       AnimatedContainer(
-        duration: ti.globalDuration,
+        duration: ti.transitionDuration,
         height: navExpand
       ),
       if(widget.floatingItem != null && !vertical) widget.floatingItem!,
@@ -171,9 +174,9 @@ class FrameState extends State<Frame> {
             Stack(
               children: [
                 AnimatedContainer(
-                  duration: ti.globalDuration,
-                  width: vertical ? media.size.width : 270,
-                  height: vertical ? (media.size.height / 2) : media.size.height,
+                  duration: ti.transitionDuration,
+                  width: (vertical ? media.size.width : 270) - horizontalPadding,
+                  height: (vertical ? (media.size.height / 2) : media.size.height) - verticalPadding,
                   child: ListView(
                     controller: scrol,
                     physics: (vertical && expanded) || !vertical ? const BouncingScrollPhysics() : const NeverScrollableScrollPhysics(),
@@ -181,7 +184,7 @@ class FrameState extends State<Frame> {
                   ),
                 ),
                 AnimatedSwitcher(
-                  duration: ti.globalDuration,
+                  duration: ti.transitionDuration,
                   child: dialogShown ? GestureDetector(
                     onTap: () =>
                       ti.nav.pop(),

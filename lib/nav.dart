@@ -74,6 +74,9 @@ class NavState extends State<Nav> {
         highlightShape: BoxShape.rectangle,
         containedInkWell: true,
         onTap: () {
+          if(ti.observatory.currentRoute() == widget.routeName){
+            return;
+          }
           ti.nav.pushNamed(widget.routeName);
           Frame.of(context).title = widget.name;
           Frame.of(context).expanded = false;

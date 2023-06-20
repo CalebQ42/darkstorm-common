@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 mixin TopResources{
   Duration globalDuration = const Duration(milliseconds: 300);
+  Duration transitionDuration = const Duration(milliseconds: 100);
 
   late final Observatory _observatory = Observatory(this);
   final GlobalKey<FrameState> _frameKey = GlobalKey();
