@@ -1,4 +1,4 @@
-import 'package:darkstorm_common/top_inherit.dart';
+import 'package:darkstorm_common/top_resources.dart';
 import 'package:flutter/material.dart';
 
 class Bottom extends StatefulWidget{

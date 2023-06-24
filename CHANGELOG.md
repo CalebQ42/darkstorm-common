@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+* Moved SpeedDial to it's own file for organization.
+* Renamed fabKey in FrameContent to speedDialKey to better represent what it is
+* Renamed `top_inherit.dart` to `top_resources.dart`
+
 ## 1.0.0
 
 * Force horzontal layout on wide screens (>550)

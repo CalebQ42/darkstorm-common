@@ -1,5 +1,6 @@
 import 'package:darkstorm_common/frame.dart';
-import 'package:darkstorm_common/top_inherit.dart';
+import 'package:darkstorm_common/speed_dial.dart';
+import 'package:darkstorm_common/top_resources.dart';
 import 'package:flutter/material.dart';
 
 class FrameContent extends StatefulWidget{
@@ -7,14 +8,14 @@ class FrameContent extends StatefulWidget{
   final Widget? child;
   final bool allowPop;
   final Widget? fab;
-  final GlobalKey<FrameSpeedDialState>? fabKey;
+  final GlobalKey<SpeedDialState>? speedDialKey;
 
   const FrameContent({
     super.key,
     this.child,
     this.allowPop = true,
     this.fab,
-    this.fabKey
+    this.speedDialKey
   });
 
   @override
@@ -36,9 +37,9 @@ class FrameContentState extends State<FrameContent> {
       onWillPop:
         !widget.allowPop ?
           () async => true :
-        widget.fabKey?.currentState?.expanded ?? false ?
+        widget.speedDialKey?.currentState?.expanded ?? false ?
           () async{
-            widget.fabKey?.currentState?.expanded = false;
+            widget.speedDialKey?.currentState?.expanded = false;
             return true;
           } :
         Frame.of(context).handleBackpress,
@@ -58,7 +59,7 @@ class FrameContentState extends State<FrameContent> {
               child: _fabExpanded ?
                 GestureDetector(
                   onTap: () {
-                    widget.fabKey?.currentState?.expanded = false;
+                    widget.speedDialKey?.currentState?.expanded = false;
                     fabExtended = false;
                   },
                   child: Container(
@@ -78,118 +79,5 @@ class FrameContentState extends State<FrameContent> {
           ]
         ),
       )
-    );
-}
-
-class FrameSpeedDial extends StatefulWidget{
-
-  final List<SpeedDialIcons> children;
-
-  const FrameSpeedDial({required super.key, required this.children});
-
-  @override
-  State<StatefulWidget> createState() => FrameSpeedDialState();
-}
-
-class FrameSpeedDialState extends State<FrameSpeedDial> with SingleTickerProviderStateMixin{
-  bool _expanded = false;
-  bool get expanded => _expanded;
-  set expanded(bool b) {
-    _expanded = b;
-    if(_expanded){
-      anim?.animateTo(1.0,
-        duration: TopResources.of(context).globalDuration,
-      );
-    }else{
-      anim?.animateBack(0,
-        duration: TopResources.of(context).globalDuration,
-      );
-    }
-    setState(() {});
-  }
-
-  AnimationController? anim;
-
-  @override
-  Widget build(BuildContext context) {
-    anim ??= AnimationController(vsync: this);
-    var ti = TopResources.of(context);
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          ...List.generate(
-            widget.children.length,
-            (i) => AnimatedPositioned(
-              duration: ti.globalDuration,
-              bottom: _expanded ? (50*(i+1)) + 18 : 8,
-              right: 8,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if(widget.children[i].label != null) AnimatedSwitcher(
-                    duration: ti.globalDuration,
-                    transitionBuilder: (child, animation) =>
-                      SizeTransition(
-                        axis: Axis.horizontal,
-                        sizeFactor: animation,
-                        child: child,
-                      ),
-                    child: _expanded ? Card(
-                      color: Theme.of(context).canvasColor,
-                      elevation: 50,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                          widget.children[i].label!,
-                        )
-                      )
-                    ) : null
-                  ),
-                  if(widget.children[i].label != null) AnimatedContainer(
-                    duration: ti.globalDuration,
-                    width: _expanded ? 10 : 0,
-                  ),
-                  widget.children[i],
-                ]
-              )
-            )
-          ),
-          FloatingActionButton(
-            heroTag: null,
-            onPressed: () {
-              expanded = !expanded;
-              FrameContent.of(context).fabExtended = expanded;
-            },
-            child: RotationTransition(
-              turns: Tween<double>(begin: 0, end: .375).animate(anim!),
-              child: const Icon(Icons.add),
-            ),
-          ),
-        ],
-      )
-    );
-  }
-}
-
-class SpeedDialIcons extends StatelessWidget{
-  final String? label;
-  final Widget? child;
-  final Function() onPressed;
-
-  const SpeedDialIcons({super.key, this.label, this.child, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) =>
-    FloatingActionButton.small(
-      onPressed: (){
-        onPressed();
-        context.findAncestorStateOfType<FrameSpeedDialState>()?.expanded = false;
-        FrameContent.of(context).fabExtended = false;
-      },
-      heroTag: null,
-      child: child,
     );
 }
