@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
-import 'package:universal_internet_checker/universal_internet_checker.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 class Driver{
 
@@ -33,11 +33,11 @@ class Driver{
   //ready returns whether the driver is ready to use. If the driver is not ready, it tries to initialize it.
   Future<bool> ready() async {
     if(sub == null){
-      var checker = UniversalInternetChecker();
-      sub = checker.onConnectionChange.listen((event) {
-        internetAvailable = event == ConnectionStatus.online;
+      var checker = InternetConnection.createInstance();
+      sub = checker.onStatusChange.listen((event) {
+        internetAvailable = event == InternetStatus.connected;
       });
-      internetAvailable = await UniversalInternetChecker.checkInternet() == ConnectionStatus.online;
+      internetAvailable = await checker.hasInternetAccess;
     }
     if(!internetAvailable) return false;
     try{
