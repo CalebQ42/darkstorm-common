@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+* Changed internet checker to newer library.
+
 ## 1.0.1
 
 * Moved SpeedDial to it's own file for organization.
