@@ -58,7 +58,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("init:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -67,7 +67,7 @@ class Driver{
     var client = await gsi!.authenticatedClient().onError((e, stack) {
       if(kDebugMode){
         print("get client:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -96,7 +96,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("setWD:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -116,7 +116,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("listFilesFromRoot:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -136,7 +136,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("listFiles:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -192,7 +192,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("getIDFromRoot:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -242,7 +242,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("getID:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -278,7 +278,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("createFileFromRoot:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -302,7 +302,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("createFileWithParent:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -336,7 +336,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("createFile:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -351,7 +351,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("getFile:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -366,7 +366,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("getContents:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -389,7 +389,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("updateContents:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -404,7 +404,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("delete:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -419,7 +419,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("trash:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
@@ -434,7 +434,7 @@ class Driver{
     }catch(e, stack){
       if(kDebugMode){
         print("untrash:");
-        print(e);
+        print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
       }
