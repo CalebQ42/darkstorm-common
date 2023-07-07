@@ -55,10 +55,26 @@ class Driver{
           await gsi!.requestScopes([scope]);
         }
       }
-    }catch(e){
+    }catch(e, stack){
+      if(kDebugMode){
+        print("init:");
+        print(e);
+      }else if (onError != null){
+        onError!(e, stack);
+      }
       return false;
     }
-    api = DriveApi((await gsi!.authenticatedClient())!);
+    var client = await gsi!.authenticatedClient().onError((e, stack) {
+      if(kDebugMode){
+        print("get client:");
+        print(e);
+      }else if (onError != null){
+        onError!(e, stack);
+      }
+      return null;
+    });
+    if(client == null) return false;
+    api = DriveApi(client);
     return true;
   }
 
@@ -81,8 +97,8 @@ class Driver{
       if(kDebugMode){
         print("setWD:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return false;
     }
@@ -101,8 +117,8 @@ class Driver{
       if(kDebugMode){
         print("listFilesFromRoot:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -121,8 +137,8 @@ class Driver{
       if(kDebugMode){
         print("listFiles:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -177,8 +193,8 @@ class Driver{
       if(kDebugMode){
         print("getIDFromRoot:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -227,8 +243,8 @@ class Driver{
       if(kDebugMode){
         print("getID:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -263,8 +279,8 @@ class Driver{
       if(kDebugMode){
         print("createFileFromRoot:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -287,8 +303,8 @@ class Driver{
       if(kDebugMode){
         print("createFileWithParent:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -321,8 +337,8 @@ class Driver{
       if(kDebugMode){
         print("createFile:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -336,8 +352,8 @@ class Driver{
       if(kDebugMode){
         print("getFile:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -351,8 +367,8 @@ class Driver{
       if(kDebugMode){
         print("getContents:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return null;
     }
@@ -374,8 +390,8 @@ class Driver{
       if(kDebugMode){
         print("updateContents:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return false;
     }
@@ -389,8 +405,8 @@ class Driver{
       if(kDebugMode){
         print("delete:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return;
     }
@@ -404,8 +420,8 @@ class Driver{
       if(kDebugMode){
         print("trash:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return false;
     }
@@ -419,8 +435,8 @@ class Driver{
       if(kDebugMode){
         print("untrash:");
         print(e);
-      }else{
-        if(onError != null) onError!(e, stack);
+      }else if (onError != null){
+        onError!(e, stack);
       }
       return false;
     }
