@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+* Tweaks to how Driver handles errors.
+
 ## 1.0.2
 
 * Changed internet checker to newer library.
