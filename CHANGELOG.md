@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+* Ignore network errors for Driver.
+
 ## 1.0.3
 
 * Tweaks to how Driver handles errors.
@@ -12,7 +16,7 @@
 
 * Moved SpeedDial to it's own file for organization.
 * Renamed fabKey in FrameContent to speedDialKey to better represent what it is
-* Renamed `top_inherit.dart` to `top_resources.dart`
+* Renamed `top_inherit.dart` to `top_resources.dart`g
 
 ## 1.0.0
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:darkstorm_common/query.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
@@ -56,6 +57,9 @@ class Driver{
         }
       }
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return false;
+      }
       if(kDebugMode){
         print("init:");
         print("${e.toString()}\n${stack.toString()}");
@@ -65,6 +69,9 @@ class Driver{
       return false;
     }
     var client = await gsi!.authenticatedClient().onError((e, stack) {
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("get client:");
         print("${e.toString()}\n${stack.toString()}");
@@ -94,6 +101,9 @@ class Driver{
       wd = foldId;
       return true;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return false;
+      }
       if(kDebugMode){
         print("setWD:");
         print("${e.toString()}\n${stack.toString()}");
@@ -114,6 +124,9 @@ class Driver{
         q: "'$foldID' in parents"
       )).files;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("listFilesFromRoot:");
         print("${e.toString()}\n${stack.toString()}");
@@ -134,6 +147,9 @@ class Driver{
         q: "'$foldID' in parents"
       )).files;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("listFiles:");
         print("${e.toString()}\n${stack.toString()}");
@@ -190,6 +206,9 @@ class Driver{
       }
       return out![0].id!;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("getIDFromRoot:");
         print("${e.toString()}\n${stack.toString()}");
@@ -240,6 +259,9 @@ class Driver{
       }
       return out![0].id;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("getID:");
         print("${e.toString()}\n${stack.toString()}");
@@ -276,6 +298,9 @@ class Driver{
       fil = await api!.files.create(fil);
       return fil.id;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("createFileFromRoot:");
         print("${e.toString()}\n${stack.toString()}");
@@ -300,6 +325,9 @@ class Driver{
       fil = await api!.files.create(fil);
       return fil.id;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("createFileWithParent:");
         print("${e.toString()}\n${stack.toString()}");
@@ -334,6 +362,9 @@ class Driver{
       );
       return fil.id;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("createFile:");
         print("${e.toString()}\n${stack.toString()}");
@@ -349,6 +380,9 @@ class Driver{
     try{
       return (await api!.files.get(id)) as File;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("getFile:");
         print("${e.toString()}\n${stack.toString()}");
@@ -364,6 +398,9 @@ class Driver{
     try{
       return (await api!.files.get(id, downloadOptions: DownloadOptions.fullMedia)) as Media;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }
       if(kDebugMode){
         print("getContents:");
         print("${e.toString()}\n${stack.toString()}");
@@ -387,6 +424,9 @@ class Driver{
       );
       return fil.id != null;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return false;
+      }
       if(kDebugMode){
         print("updateContents:");
         print("${e.toString()}\n${stack.toString()}");
@@ -402,6 +442,9 @@ class Driver{
     try{
       return await api!.files.delete(id);
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return;
+      }
       if(kDebugMode){
         print("delete:");
         print("${e.toString()}\n${stack.toString()}");
@@ -417,6 +460,9 @@ class Driver{
     try{
       return (await api!.files.update(File(trashed: true), id)).trashed ?? false;
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return false;
+      }
       if(kDebugMode){
         print("trash:");
         print("${e.toString()}\n${stack.toString()}");
@@ -432,6 +478,9 @@ class Driver{
     try{
       return !((await api!.files.update(File(trashed: false), id)).trashed ?? false);
     }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return false;
+      }
       if(kDebugMode){
         print("untrash:");
         print("${e.toString()}\n${stack.toString()}");
