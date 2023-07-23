@@ -15,7 +15,8 @@ class Bottom extends StatefulWidget{
   final bool safeArea;
 
   final GlobalKey<_ButtonState> _butKey = GlobalKey();
-  final GlobalKey<AnimatedListState> listKey = GlobalKey();
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey();
+  GlobalKey<AnimatedListState> get listKey => _listKey;
 
 
   Bottom({
@@ -54,16 +55,40 @@ class Bottom extends StatefulWidget{
 }
 
 class BottomState extends State<Bottom> {
-  void update() => setState((){});
+  void update() {
+    var oldLen = children?.length ?? 0;
+    var netChange = updateChildren();
+    if(netChange == 0){
+      setState((){});
+      return;
+    }
+    if(netChange < 0){
+      for(var i = 0; i > netChange; i--){
+        widget.listKey.currentState?.removeItem(oldLen-1+i, (context, animation) => SizeTransition(sizeFactor: animation), duration: Duration.zero);
+      }
+    }
+    if(netChange > 0){
+      for(var i = 0; i < netChange; i++){
+        widget.listKey.currentState?.insertItem(children!.length+i-1, duration: Duration.zero);
+      }
+    }
+  }
+  List<Widget>? children;
 
-  @override
-  Widget build(BuildContext context) {
-    List<Widget>? children;
+  int updateChildren(){
+    if(widget.itemBuilder != null) return 0;
+    var oldLen = children?.length ?? 0;
     if(widget.children != null){
       children = widget.children!(context);
     }else if(widget.child != null){
       children = [widget.child!(context)];
     }
+    return children!.length - oldLen;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if(children == null) updateChildren();
     var child = ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.65,
@@ -80,7 +105,10 @@ class BottomState extends State<Bottom> {
           initialItemCount: widget.itemBuilder != null ? widget.itemBuilderCount : children!.length,
           shrinkWrap: true,
           itemBuilder: widget.itemBuilder ?? (context, i, anim) =>
-            children![i]
+            SizeTransition(
+              sizeFactor: anim,
+              child: children![i]
+            ),
         )
       )
     );
