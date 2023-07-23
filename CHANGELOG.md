@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+* Fixed Bottom not updating properly.
+
 ## 1.0.4
 
 * Ignore network errors for Driver.
