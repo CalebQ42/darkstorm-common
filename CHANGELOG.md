@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+* Added handling of Google Drive being full error (`The user's Drive storage quota has been exceeded.`)
+
 ## 1.0.5
 
 * Fixed Bottom not updating properly.

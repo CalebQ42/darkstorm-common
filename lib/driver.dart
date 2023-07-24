@@ -19,8 +19,9 @@ class Driver{
   StreamSubscription? sub;
   bool internetAvailable = true;
   void Function(Object? error, StackTrace stack)? onError;
+  VoidCallback? onFull;
 
-  Driver(this.scope, [this.onError]) : wd = scope == DriveApi.driveAppdataScope ? "appDataFolder" : "root";
+  Driver(this.scope, {this.onError, this.onFull}) : wd = scope == DriveApi.driveAppdataScope ? "appDataFolder" : "root";
 
   Future<bool> changeScope(String scope) async {
     this.scope = scope;
@@ -300,6 +301,9 @@ class Driver{
     }catch(e, stack){
       if(e is PlatformException && e.code == "network_error"){
         return null;
+      }else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
+        if(onFull != null) onFull!();
+        return null;
       }
       if(kDebugMode){
         print("createFileFromRoot:");
@@ -326,6 +330,9 @@ class Driver{
       return fil.id;
     }catch(e, stack){
       if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
+        if(onFull != null) onFull!();
         return null;
       }
       if(kDebugMode){
@@ -363,6 +370,9 @@ class Driver{
       return fil.id;
     }catch(e, stack){
       if(e is PlatformException && e.code == "network_error"){
+        return null;
+      }else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
+        if(onFull != null) onFull!();
         return null;
       }
       if(kDebugMode){
@@ -425,6 +435,9 @@ class Driver{
       return fil.id != null;
     }catch(e, stack){
       if(e is PlatformException && e.code == "network_error"){
+        return false;
+      }else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
+        if(onFull != null) onFull!();
         return false;
       }
       if(kDebugMode){
