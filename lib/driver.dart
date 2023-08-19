@@ -16,12 +16,13 @@ class Driver{
   DriveApi? api;
   GoogleSignIn? gsi;
 
-  StreamSubscription? sub;
-  bool internetAvailable = true;
+  InternetConnection con;
   void Function(Object? error, StackTrace stack)? onError;
   VoidCallback? onFull;
 
-  Driver(this.scope, {this.onError, this.onFull}) : wd = scope == DriveApi.driveAppdataScope ? "appDataFolder" : "root";
+  Driver(this.scope, {this.onError, this.onFull}) :
+      wd = scope == DriveApi.driveAppdataScope ? "appDataFolder" : "root",
+      con = InternetConnection.createInstance();
 
   Future<bool> changeScope(String scope) async {
     this.scope = scope;
@@ -34,14 +35,7 @@ class Driver{
 
   //ready returns whether the driver is ready to use. If the driver is not ready, it tries to initialize it.
   Future<bool> ready() async {
-    if(sub == null){
-      var checker = InternetConnection.createInstance();
-      sub = checker.onStatusChange.listen((event) {
-        internetAvailable = event == InternetStatus.connected;
-      });
-      internetAvailable = await checker.hasInternetAccess;
-    }
-    if(!internetAvailable) return false;
+    if(!await con.hasInternetAccess) return false;
     try{
       gsi ??= GoogleSignIn(scopes: [scope]);
       bool authd = gsi!.currentUser != null;
@@ -88,7 +82,7 @@ class Driver{
 
   //readySync is similar to ready, except does NOT try to initialize the driver and can be used syncronysly. Use ready when possible.
   bool readySync() =>
-    internetAvailable && gsi != null && gsi!.currentUser != null && api != null;
+    (con.lastTryResults == InternetStatus.connected) && gsi != null && gsi!.currentUser != null && api != null;
 
   Future<bool> setWD(String folder) async {
     if(!await ready()) return false;
@@ -279,8 +273,19 @@ class Driver{
   Future<String?> createFolder(String filename, {String? description}) async =>
     createFile(filename, description: description, mimeType: DriveQueryBuilder.folderMime);
 
-  Future<String?> createFileFromRoot(String filename, {String? mimeType, Map<String, String?>? appProperties, String? description}) async{
+  Future<String?> createFileFromRoot(
+      String filename,
+      {String? mimeType,
+      Map<String, String?>? appProperties,
+      String? description,
+      //initialSizeCheck defaults to 1MB which should be enough for most text-based uses (json). Large files should specify an amount that is approximately the file size.
+      int initialSizeCheck = 1048576} 
+  ) async{
     if(!await ready()) return null;
+    if(!await hasSpace(initialSizeCheck)){
+      if(onFull != null) onFull!();
+      return null;
+    }
     try{
       String? parent = scope == DriveApi.driveAppdataScope ? "appDataFolder" : "root";
       var lastInd = filename.lastIndexOf("/");
@@ -301,10 +306,11 @@ class Driver{
     }catch(e, stack){
       if(e is PlatformException && e.code == "network_error"){
         return null;
-      }else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
-        if(onFull != null) onFull!();
-        return null;
       }
+      // else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
+      //   if(onFull != null) onFull!();
+      //   return null;
+      // }
       if(kDebugMode){
         print("createFileFromRoot:");
         print("${e.toString()}\n${stack.toString()}");
@@ -315,8 +321,20 @@ class Driver{
     }
   }
 
-  Future<String?> createFileWithParent(String filename, String parentId, {String? mimeType, Map<String, String?>? appProperties, String? description}) async {
+  Future<String?> createFileWithParent(
+      String filename,
+      String parentId,
+      {String? mimeType,
+      Map<String, String?>? appProperties,
+      String? description,
+      //initialSizeCheck defaults to 1MB which should be enough for most text-based uses (json). Large files should specify an amount that is approximately the file size.
+      int initialSizeCheck = 1048576} 
+  ) async {
     if(!await ready()) return null;
+    if(!await hasSpace(initialSizeCheck)){
+      if(onFull != null) onFull!();
+      return null;
+    }
     try{
       var fil = File(
         modifiedTime: DateTime.now(),
@@ -331,10 +349,11 @@ class Driver{
     }catch(e, stack){
       if(e is PlatformException && e.code == "network_error"){
         return null;
-      }else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
-        if(onFull != null) onFull!();
-        return null;
       }
+      // else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
+      //   if(onFull != null) onFull!();
+      //   return null;
+      // }
       if(kDebugMode){
         print("createFileWithParent:");
         print("${e.toString()}\n${stack.toString()}");
@@ -345,8 +364,19 @@ class Driver{
     }
   }
 
-  Future<String?> createFile(String filename, {String? mimeType, Map<String, String?>? appProperties, String? description, Stream<List<int>>? data, int? dataLength}) async{
+  Future<String?> createFile(
+      String filename,
+      {String? mimeType,
+      Map<String, String?>? appProperties,
+      String? description,
+      Stream<List<int>>? data,
+      int? dataLength}
+  ) async{
     if(!await ready()) return null;
+    if(dataLength != null && !await hasSpace(dataLength)){
+      if(onFull != null) onFull!();
+      return null;
+    }
     try{
       String? parent = wd;
       var lastInd = filename.lastIndexOf("/");
@@ -371,10 +401,11 @@ class Driver{
     }catch(e, stack){
       if(e is PlatformException && e.code == "network_error"){
         return null;
-      }else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
-        if(onFull != null) onFull!();
-        return null;
       }
+      // else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
+      //   if(onFull != null) onFull!();
+      //   return null;
+      // }
       if(kDebugMode){
         print("createFile:");
         print("${e.toString()}\n${stack.toString()}");
@@ -423,6 +454,10 @@ class Driver{
 
   Future<bool> updateContents(String id, Stream<List<int>> data, {Map<String, String?>? appProperties, int? dataLength}) async{
     if(!await ready()) return false;
+    if(dataLength != null && !await hasSpace(dataLength)){
+      if(onFull != null) onFull!();
+      return false;
+    }
     try{
       var fil = await api!.files.update(
         File(
@@ -436,10 +471,11 @@ class Driver{
     }catch(e, stack){
       if(e is PlatformException && e.code == "network_error"){
         return false;
-      }else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
-        if(onFull != null) onFull!();
-        return false;
       }
+      // else if(e is DetailedApiRequestError && e.message == "The user's Drive storage quota has been exceeded."){
+      //   if(onFull != null) onFull!();
+      //   return false;
+      // }
       if(kDebugMode){
         print("updateContents:");
         print("${e.toString()}\n${stack.toString()}");
@@ -496,6 +532,38 @@ class Driver{
       }
       if(kDebugMode){
         print("untrash:");
+        print("${e.toString()}\n${stack.toString()}");
+      }else if (onError != null){
+        onError!(e, stack);
+      }
+      return false;
+    }
+  }
+
+  Future<bool> hasSpace(int bytesNeeded) async{
+    if(!await ready()) return false;
+    try{
+      var about = await api!.about.get($fields: "storageQuota");
+      if(about.storageQuota == null || about.storageQuota?.limit == null){
+        return false;
+      }else if(about.storageQuota?.limit == null){ //Unlimited storage
+        return true;
+      }
+      var limit = int.tryParse(about.storageQuota!.limit!);
+      if(limit == null){
+        return false;
+      }
+      var usage = int.tryParse(about.storageQuota!.usage!);
+      if(usage == null){
+        return false;
+      }
+      return limit - usage >= bytesNeeded;
+    }catch(e, stack){
+      if(e is PlatformException && e.code == "network_error"){
+        return false;
+      }
+      if(kDebugMode){
+        print("hasSpace:");
         print("${e.toString()}\n${stack.toString()}");
       }else if (onError != null){
         onError!(e, stack);
