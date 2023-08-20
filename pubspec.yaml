@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   google_sign_in: ^6.1.4
   extension_google_sign_in_as_googleapis_auth: ^2.0.10
-  googleapis: ^11.3.0
+  googleapis: ^11.4.0
   internet_connection_checker_plus: ^2.0.0
 
 dev_dependencies:
