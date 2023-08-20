@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.7
+
+* Added better handling of full Google Drive. Checks when updating and creating files.
+
 ## 1.0.6
 
 * Added handling of Google Drive being full error (`The user's Drive storage quota has been exceeded.`)
