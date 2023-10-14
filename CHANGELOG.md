@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.8
+
+* Update depreciated `willPopScope` to `PopScope`.
+* Updated deps
+
 ## 1.0.7
 
 * Added better handling of full Google Drive. Checks when updating and creating files.

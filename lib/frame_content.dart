@@ -33,16 +33,17 @@ class FrameContentState extends State<FrameContent> {
 
   @override
   Widget build(BuildContext context) =>
-    WillPopScope(
-      onWillPop:
-        !widget.allowPop ?
-          () async => true :
-        widget.speedDialKey?.currentState?.expanded ?? false ?
-          () async{
-            widget.speedDialKey?.currentState?.expanded = false;
-            return true;
-          } :
-        Frame.of(context).handleBackpress,
+    PopScope(
+      canPop: widget.allowPop && !(widget.speedDialKey?.currentState?.expanded ?? false) && Frame.of(context).shouldPop,
+      onPopInvoked: (b){
+        if(b) return;
+        if(!widget.allowPop) return;
+        if(widget.speedDialKey?.currentState?.expanded ?? false){
+          widget.speedDialKey?.currentState?.expanded = false;
+        }else{
+          Frame.of(context).handlePop();
+        }
+      },
       child: Material(
         elevation: 50.0,
         color: Theme.of(context).canvasColor,

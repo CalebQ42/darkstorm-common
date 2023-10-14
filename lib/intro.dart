@@ -23,10 +23,10 @@ class _IntroState extends State<IntroScreen> {
   Widget build(BuildContext context) {
     var tr = TopResources.of(context);
     return FrameContent(
-      child: WillPopScope(
-        onWillPop: () async{
-          if(screen != 0) setState(() => screen -= 1);
-          return false;
+      child: PopScope(
+        canPop: screen <= 0,
+        onPopInvoked: (b){
+          if(!b) setState(() => screen -= 1);
         },
         child: Stack(
           alignment: Alignment.center,

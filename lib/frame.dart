@@ -99,12 +99,12 @@ class FrameState extends State<Frame> {
       }
   }
 
-  Future<bool> handleBackpress() async{
+  bool get shouldPop => !_expanded;
+
+  void handlePop(){
     if(_expanded){
       expanded = false;
-      return false;
     }
-    return true;
   }
 
   ShapeBorder getBorder([BorderRadius br = BorderRadius.zero]){
