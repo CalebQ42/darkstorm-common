@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.9
+
+* Allow setting alignment of `Bottom` items.
+
 ## 1.0.8
 
 * Update depreciated `willPopScope` to `PopScope`.

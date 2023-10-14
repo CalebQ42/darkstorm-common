@@ -9,6 +9,7 @@ class Bottom extends StatefulWidget{
   final Widget Function(BuildContext)? child;
   final List<Widget> Function(BuildContext)? children;
   final Widget Function(BuildContext, int, Animation<double>)? itemBuilder;
+  final Alignment childAlignment;
   final int itemBuilderCount;
   final bool padding;
   final bool dismissible;
@@ -26,6 +27,7 @@ class Bottom extends StatefulWidget{
     this.child,
     this.children,
     this.itemBuilder,
+    this.childAlignment = Alignment.center,
     this.itemBuilderCount = 0,
     this.padding = true,
     this.dismissible = true,
@@ -107,7 +109,10 @@ class BottomState extends State<Bottom> {
           itemBuilder: widget.itemBuilder ?? (context, i, anim) =>
             SizeTransition(
               sizeFactor: anim,
-              child: children![i]
+              child: Align(
+                alignment: widget.childAlignment,
+                child: children![i]
+              )
             ),
         )
       )
