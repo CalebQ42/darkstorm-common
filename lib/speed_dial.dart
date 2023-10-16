@@ -5,8 +5,13 @@ import 'package:flutter/material.dart';
 class SpeedDial extends StatefulWidget{
 
   final List<SpeedDialIcons> children;
+  final Widget fabChild;
 
-  const SpeedDial({required super.key, required this.children});
+  const SpeedDial(
+    {required super.key,
+    required this.children,
+    this.fabChild = const Icon(Icons.add),
+  });
 
   @override
   State<StatefulWidget> createState() => SpeedDialState();
@@ -86,7 +91,7 @@ class SpeedDialState extends State<SpeedDial> with SingleTickerProviderStateMixi
             },
             child: RotationTransition(
               turns: Tween<double>(begin: 0, end: .375).animate(anim!),
-              child: const Icon(Icons.add),
+              child: widget.fabChild,
             ),
           ),
         ],
