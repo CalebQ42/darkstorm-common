@@ -1,6 +1,6 @@
 name: darkstorm_common
 description: Common widgets and utilities for my apps
-version: 1.0.10
+version: 1.0.11
 repository: https://github.com/CalebQ42/darkstorm-common
 homepage: https://darkstorm.tech
 
@@ -11,14 +11,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_sign_in: ^6.1.5
-  extension_google_sign_in_as_googleapis_auth: ^2.0.11
-  googleapis: ^11.4.0
-  internet_connection_checker_plus: ^2.1.0
+  google_sign_in: ^6.2.1
+  extension_google_sign_in_as_googleapis_auth: ^2.0.12
+  googleapis: ^12.0.0
+  internet_connection_checker_plus: ^2.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.3
+  flutter_lints: ^3.0.1
 
 flutter:

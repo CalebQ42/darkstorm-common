@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.11
+
+* Updated dependencies
+
 ## 1.0.10
 
 * Allow setting SpeedDial's main fab's child. Defaults to `Icon(Icons.add).
