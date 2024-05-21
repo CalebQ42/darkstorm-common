@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.13
+
+* Fix internet connection status on `readySync`
+
 ## 1.0.12
 
 * Update dependencies

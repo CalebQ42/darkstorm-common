@@ -17,12 +17,17 @@ class Driver{
   GoogleSignIn? gsi;
 
   InternetConnection con;
+  bool internetAvailable = true;
   void Function(Object? error, StackTrace stack)? onError;
   VoidCallback? onFull;
 
   Driver(this.scope, {this.onError, this.onFull}) :
       wd = scope == DriveApi.driveAppdataScope ? "appDataFolder" : "root",
-      con = InternetConnection.createInstance();
+      con = InternetConnection.createInstance() {
+    con.onStatusChange.listen((InternetStatus status) {
+      internetAvailable = status == InternetStatus.connected;
+    });
+  }
 
   Future<bool> changeScope(String scope) async {
     this.scope = scope;
@@ -82,7 +87,7 @@ class Driver{
 
   //readySync is similar to ready, except does NOT try to initialize the driver and can be used syncronysly. Use ready when possible.
   bool readySync() =>
-    (con.lastTryResults == InternetStatus.connected) && gsi != null && gsi!.currentUser != null && api != null;
+    internetAvailable && gsi != null && gsi!.currentUser != null && api != null;
 
   Future<bool> setWD(String folder) async {
     if(!await ready()) return false;
