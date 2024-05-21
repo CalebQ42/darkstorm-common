@@ -9,7 +9,7 @@ class UpdatingSwitchTile extends StatefulWidget{
   final Widget? title;
   final Widget? subtitle;
 
-  const UpdatingSwitchTile({required this.value, this.onChanged, this.title, this.subtitle, this.contentPadding, Key? key}) : super(key: key);
+  const UpdatingSwitchTile({required this.value, this.onChanged, this.title, this.subtitle, this.contentPadding, super.key});
 
   @override
   State<StatefulWidget> createState() => UpdatingSwitchTileState();
@@ -44,7 +44,7 @@ class UpdatingSwitch extends StatefulWidget{
   final bool value;
   final Function(bool) onChanged;
 
-  const UpdatingSwitch({required this.value, required this.onChanged, Key? key}) : super(key: key);
+  const UpdatingSwitch({required this.value, required this.onChanged, super.key});
 
   @override
   State<StatefulWidget> createState() => UpdatingSwitchState();

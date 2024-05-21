@@ -133,7 +133,7 @@ class BottomState extends State<Bottom> {
 class _BottomButtons extends StatefulWidget{
   final List<Widget> Function(BuildContext) builder;
 
-  const _BottomButtons({required this.builder, Key? key}) : super(key: key);
+  const _BottomButtons({required this.builder, super.key});
 
   @override
   State<StatefulWidget> createState() => _ButtonState();
