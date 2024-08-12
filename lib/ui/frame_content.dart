@@ -35,7 +35,7 @@ class FrameContentState extends State<FrameContent> {
   Widget build(BuildContext context) =>
     PopScope(
       canPop: widget.allowPop && !(widget.speedDialKey?.currentState?.expanded ?? false) && Frame.of(context).shouldPop,
-      onPopInvoked: (b){
+      onPopInvokedWithResult: (b, res){
         if(b) return;
         if(!widget.allowPop) return;
         if(widget.speedDialKey?.currentState?.expanded ?? false){

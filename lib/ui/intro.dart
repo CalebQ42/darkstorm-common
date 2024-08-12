@@ -25,7 +25,7 @@ class _IntroState extends State<IntroScreen> {
     return FrameContent(
       child: PopScope(
         canPop: screen <= 0,
-        onPopInvoked: (b){
+        onPopInvokedWithResult: (b, res){
           if(!b) setState(() => screen -= 1);
         },
         child: Stack(

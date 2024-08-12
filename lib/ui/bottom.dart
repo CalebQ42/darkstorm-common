@@ -145,7 +145,7 @@ class _ButtonState extends State<_BottomButtons>{
 
   @override
   Widget build(BuildContext context) =>
-    ButtonBar(
+    OverflowBar(
       alignment: MainAxisAlignment.end,
       children: widget.builder(context)
     );
