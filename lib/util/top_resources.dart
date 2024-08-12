@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:darkstorm_common/frame.dart';
-import 'package:darkstorm_common/observatory.dart';
+import 'package:darkstorm_common/ui/frame.dart';
+import 'package:darkstorm_common/util/observatory.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

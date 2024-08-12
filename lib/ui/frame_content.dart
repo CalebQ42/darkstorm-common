@@ -1,6 +1,6 @@
-import 'package:darkstorm_common/frame.dart';
-import 'package:darkstorm_common/speed_dial.dart';
-import 'package:darkstorm_common/top_resources.dart';
+import 'package:darkstorm_common/ui/frame.dart';
+import 'package:darkstorm_common/ui/speed_dial.dart';
+import 'package:darkstorm_common/util/top_resources.dart';
 import 'package:flutter/material.dart';
 
 class FrameContent extends StatefulWidget{

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:darkstorm_common/query.dart';
+import 'package:darkstorm_common/drive/query.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';

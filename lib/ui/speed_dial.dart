@@ -1,5 +1,5 @@
-import 'package:darkstorm_common/frame_content.dart';
-import 'package:darkstorm_common/top_resources.dart';
+import 'package:darkstorm_common/ui/frame_content.dart';
+import 'package:darkstorm_common/util/top_resources.dart';
 import 'package:flutter/material.dart';
 
 class SpeedDial extends StatefulWidget{
