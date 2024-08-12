@@ -69,7 +69,7 @@ class DarkstormBackend {
             "content-type": "application/json",
           },
           body: const JsonEncoder()
-              .convert(<String, String>{"id": id, "platform": plat}));
+              .convert({"id": id, "platform": plat}));
       if (resp.statusCode == 201) {
         Map<String, String> rt = const JsonDecoder().convert(resp.body);
         if (rt["id"] != id) {

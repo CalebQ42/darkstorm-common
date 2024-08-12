@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+* Moved Stupid Backend, now called Darkstorm Backend, here instead of a separate library.
+  * Count ID is now handled by the library instead of by the Application.
+* Organized the components into separate folders (ui, util, drive, and backend)
+
 ## 1.0.13
 
 * Fix internet connection status on `readySync`
