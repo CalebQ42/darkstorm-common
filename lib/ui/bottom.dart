@@ -43,7 +43,7 @@ class Bottom extends StatefulWidget{
   static BottomState? of(BuildContext context) => context.findAncestorStateOfType<BottomState>();
 
   void updateButtons() => _butKey.currentState?.refresh();
-  
+
   void show(BuildContext context) =>
     showModalBottomSheet(
       routeSettings: const RouteSettings(name: "BottomDialog"),
@@ -53,6 +53,10 @@ class Bottom extends StatefulWidget{
       isScrollControlled: true,
       isDismissible: dismissible,
       useSafeArea: safeArea,
+      sheetAnimationStyle: AnimationStyle(
+      	duration: TopResources.of(context).globalDuration,
+       	reverseDuration: TopResources.of(context).globalDuration
+      ),
     );
 }
 

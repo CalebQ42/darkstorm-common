@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+* Bottom now obeys TopResource's globalDuration.
+
 ## 2.0.0
 
 * Moved Stupid Backend, now called Darkstorm Backend, here instead of a separate library.
