@@ -30,16 +30,13 @@ class DarkstormBackend {
                 : null,
             useDefaultOptions: internetCheckAddress == null) {
     platform.when(
-        io: () => platform.when(
-              fuchsia: () => plat = "fuchsia",
-              windows: () => plat = 'windows',
-              android: () => plat = 'android',
-              iOS: () => plat = 'iOS',
-              macOS: () => plat = 'macOS',
-              linux: () => plat = 'linux',
-              unknown: () => plat = 'unknown',
-            ),
-        web: () => plat = "web",
+        fuchsia: () => plat = "fuchsia",
+        windows: () => plat = 'windows',
+        android: () => plat = 'android',
+        iOS: () => plat = 'iOS',
+        macOS: () => plat = 'macOS',
+        linux: () => plat = 'linux',
+        js: () => plat = "web",
         unknown: () => plat = "unknown");
     con.internetStatus.then(
         (value) => _internetAvailable = value == InternetStatus.connected);
@@ -68,8 +65,7 @@ class DarkstormBackend {
             "X-API-Key": apiKey,
             "content-type": "application/json",
           },
-          body: const JsonEncoder()
-              .convert({"id": id, "platform": plat}));
+          body: const JsonEncoder().convert({"id": id, "platform": plat}));
       if (resp.statusCode == 201) {
         Map<String, String> rt = const JsonDecoder().convert(resp.body);
         if (rt["id"] != id) {
