@@ -5,7 +5,7 @@ import 'package:darkstorm_common/util/observatory.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-mixin TopResources{
+mixin TopResources {
   Duration globalDuration = const Duration(milliseconds: 300);
   Duration transitionDuration = const Duration(milliseconds: 100);
 
@@ -20,16 +20,21 @@ mixin TopResources{
   Observatory get observatory => _observatory;
 
   bool get isMobile {
-    if(kIsWeb){
+    if (kIsWeb) {
       return false;
     }
     return Platform.isAndroid || Platform.isIOS;
   }
 
-  static TopResources of(BuildContext context) => context.getInheritedWidgetOfExactType<TopInherit>()!.resources;
+  bool get isDesktop {
+    return Platform.isLinux || Platform.isMacOS || Platform.isWindows;
+  }
+
+  static TopResources of(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<TopInherit>()!.resources;
 }
 
-class TopInherit extends InheritedWidget{
+class TopInherit extends InheritedWidget {
   final TopResources resources;
 
   const TopInherit({super.key, required this.resources, required super.child});
