@@ -1,8 +1,8 @@
 # Changelog
 
-## 2.0.13
+## 2.0.3
 
-* Update `googleapis` package constraints
+* More thoughtful package constraints
 
 ## 2.0.1
 
