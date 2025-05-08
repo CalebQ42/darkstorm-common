@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.13
+
+* Update `googleapis` package constraints
+
 ## 2.0.1
 
 * Bottom now obeys TopResource's globalDuration.
